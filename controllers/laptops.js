@@ -7,7 +7,7 @@ const getLaptop = async (req, res) => {
 }
 
 const createLaptop = async (req, res) => {
-    res.send('Create laptop')
+    res.json(req.user)
 }
 
 const updateLaptop = async (req, res) => {
