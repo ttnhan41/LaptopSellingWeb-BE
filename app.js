@@ -1,5 +1,10 @@
 require('dotenv').config()
 require('express-async-errors')
+
+// extra security packages
+const helmet = require('helmet')
+const cors = require('cors')
+
 const express = require('express')
 const app = express()
 
@@ -19,6 +24,8 @@ const notFoundMiddleware = require('./middleware/not-found')
 const errorHandlerMiddleware = require('./middleware/error-handler')
 
 app.use(express.json())
+app.use(helmet())
+app.use(cors())
 
 // routes
 app.use('/api/v1/auth', authRouter)
