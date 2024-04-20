@@ -27,7 +27,7 @@ const createLaptop = async (req, res) => {
 
 const updateLaptop = async (req, res) => {
   const {
-    body: { name, price, status, cpu, ram, hardDisk, graphicCard, screen, connectionPort, keyboard, audio, lan, wirelessLan, webcam, os, battery, weight, color, size, imageUrl },
+    body: { name, price, saleOff, status, cpu, ram, hardDisk, graphicCard, screen, connectionPort, keyboard, audio, lan, wirelessLan, webcam, os, battery, weight, color, size, imageUrl },
     params: { id: laptopId },
   } = req
 

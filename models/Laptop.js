@@ -10,6 +10,10 @@ const LaptopSchema = new mongoose.Schema(
       type: Number,
       require: [true, 'Please provide laptop price'],
     },
+    saleOff: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       default: 'New 100%, Fullbox',
