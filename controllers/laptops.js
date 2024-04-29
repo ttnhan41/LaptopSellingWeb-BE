@@ -80,7 +80,7 @@ const updateLaptop = async (req, res) => {
     throw new BadRequestError('Image URL field cannot be empty')
   }
   const laptop = await Laptop.findByIdAndUpdate(
-    { _id:laptopId }, 
+    { _id: laptopId }, 
     req.body, 
     { new: true, runValidators: true }
   )
