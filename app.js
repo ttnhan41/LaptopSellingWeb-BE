@@ -16,6 +16,7 @@ const authenticateUser = require('./middleware/authentication')
 
 // routers
 const authRouter = require('./routes/auth')
+const userRouter = require('./routes/user');
 const getLaptopsRouter = require('./routes/getLaptops') 
 const manageLaptopsRouter = require('./routes/manageLaptops')
 
@@ -29,6 +30,7 @@ app.use(cors())
 
 // routes
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/users', userRouter);
 app.use('/api/v1/laptops', getLaptopsRouter)
 app.use('/api/v1/laptops', authenticateUser, manageLaptopsRouter)
 
