@@ -4,7 +4,7 @@ const { NotFoundError, BadRequestError, UnauthenticatedError } = require('../err
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: 'user' }).select('-password')
-  res.status(StatusCodes.OK).json({ users })
+  res.status(StatusCodes.OK).json({ users, count: users.length })
 }
 
 const getUser = async (req, res) => {
@@ -12,6 +12,11 @@ const getUser = async (req, res) => {
   if (!user) {
     throw new NotFoundError(`No user with id: ${req.params.id}`)
   }
+  res.status(StatusCodes.OK).json({ user })
+}
+
+const showCurrentUser = async (req, res) => {
+  const user = req.user
   res.status(StatusCodes.OK).json({ user })
 }
 
@@ -57,6 +62,7 @@ const updateUserPassword = async (req, res) => {
 module.exports = {
   getAllUsers,
   getUser,
+  showCurrentUser,
   updateUser,
   updateUserPassword,
 }

@@ -3,7 +3,16 @@ const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, UnauthenticatedError } = require('../errors')
 
 const register = async (req, res) => {
-  const user = await User.create({ ...req.body })
+  const { email, password } = req.body
+  const emailAlreadyExists = await User.findOne({ email })
+  if (emailAlreadyExists) {
+    throw new BadRequestError('Email already exists')
+  }
+  // first registered user is an admin
+  const isFirstAccount = (await User.countDocuments({})) === 0
+  const role = isFirstAccount ? 'admin' : 'user'
+
+  const user = await User.create({ email, password, role })
   const token = user.createJWT()
   res.status(StatusCodes.CREATED).json({ token })
 }
