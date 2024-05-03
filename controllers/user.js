@@ -16,7 +16,10 @@ const getUser = async (req, res) => {
 }
 
 const showCurrentUser = async (req, res) => {
-  const user = req.user
+  const user = await User.findOne({ _id: req.user.userId }).select('-password')
+  if (!user) {
+    throw new NotFoundError(`No user with id: ${req.user.userId}`)
+  }
   res.status(StatusCodes.OK).json({ user })
 }
 
