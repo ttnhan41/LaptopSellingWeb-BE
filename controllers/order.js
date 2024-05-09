@@ -1,5 +1,5 @@
 const Order = require('../models/Order')
-const Laptop = require('../models/Laptop')
+const Cart = require('../models/Cart')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
 
@@ -9,33 +9,24 @@ const fakeStripeAPI = async ({ amount, currency }) => {
 }
 
 const createOrder = async (req, res) => {
-  const { tax, shippingFee, items: cartItems } = req.body
-  if (!cartItems || cartItems.length < 1) {
-    throw new BadRequestError('No cart items provided')
+  let { tax, shippingFee } = req.body
+  if (!tax) {
+    tax = 0
   }
-  if (!tax || !shippingFee) {
-    throw new BadRequestError('Please provide tax and shipping fee')
+  if (!shippingFee) {
+    shippingFee = 0
   }
 
-  let orderItems = []
-  let subtotal = 0
-  for (const item of cartItems) {
-    const dbProduct = await Laptop.findOne({ _id: item.product })
-    if (!dbProduct) {
-      throw new NotFoundError(`No item with id: ${item.product}`)
-    }
-    const { name, price, imageUrl, _id } = dbProduct
-    const singleOrderItem = {
-      name,
-      price,
-      imageUrl,
-      product: _id,
-    }
-    // Add item to order
-    orderItems = [...orderItems, singleOrderItem]
-    subtotal += price
+  let cart = await Cart.findOne({ user: req.user.userId })
+
+  if (!cart) {
+    throw new NotFoundError('No cart found')
   }
-  const total = tax + shippingFee + subtotal
+  if (!cart.cartItems || cart.cartItems.length < 1) {
+    throw new BadRequestError('No items in cart')
+  }
+
+  const total = tax + shippingFee + cart.subtotal
   
   // Get client secret
   const paymentIntent = await fakeStripeAPI({
@@ -43,15 +34,22 @@ const createOrder = async (req, res) => {
     currency: 'vnd',
   })
 
+  // Create order
   const order = await Order.create({
-    orderItems,
+    orderItems: cart.cartItems,
     total,
-    subtotal,
+    subtotal: cart.subtotal,
     tax,
     shippingFee,
     clientSecret: paymentIntent.client_secret,
     user: req.user.userId,
   })
+
+  // Reset cart after creating order
+  cart.cartItems = []
+  cart.subtotal = 0
+  await cart.save()
+
   res.status(StatusCodes.CREATED).json({ order, clientSecret: order.clientSecret })
 }
 

@@ -19,6 +19,7 @@ const authRouter = require('./routes/auth')
 const userRouter = require('./routes/user')
 const getLaptopsRouter = require('./routes/getLaptops') 
 const manageLaptopsRouter = require('./routes/manageLaptops')
+const cartRouter = require('./routes/cart')
 const orderRouter = require('./routes/order')
 
 // error handler
@@ -34,6 +35,7 @@ app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/laptops', getLaptopsRouter)
 app.use('/api/v1/laptops', authenticateUser, manageLaptopsRouter)
+app.use('/api/v1/cart', cartRouter)
 app.use('/api/v1/orders', orderRouter)
 
 app.use(notFoundMiddleware)
