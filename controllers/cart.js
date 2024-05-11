@@ -10,10 +10,11 @@ const addItemToCart = async (req, res) => {
   if (!dbProduct) {
     throw new NotFoundError(`No item with id: ${productId}`)
   }
-  const { name, price, imageUrl, _id } = dbProduct
+  const { name, price, saleOff, imageUrl, _id } = dbProduct
   const singleCartItem = {
     name,
     price,
+    saleOff,
     imageUrl,
     product: _id,
   }
@@ -26,25 +27,27 @@ const addItemToCart = async (req, res) => {
       cart.subtotal = 0
     }
 
-    if (cart.cartItems.find(item => item.product.toString() === productId.toString())) {
+    if (cart.cartItems.find((item) => item.product.toString() === productId.toString())) {
       throw new BadRequestError('This product is already in cart')
     }
 
     cart.cartItems.push({
       name: singleCartItem.name,
       price: singleCartItem.price,
+      saleOff: singleCartItem.saleOff,
       imageUrl: singleCartItem.imageUrl,
       product: singleCartItem.product
     })
-    cart.subtotal += singleCartItem.price
+    cart.subtotal += singleCartItem.price - (singleCartItem.price * (singleCartItem.saleOff / 100))
     await cart.save()
     res.status(StatusCodes.CREATED).json({ cart })
   } else {
     // No cart for user, create new cart
+    const currentPrice = singleCartItem.price - (singleCartItem.price * (singleCartItem.saleOff / 100))
     const newCart = await Cart.create({
       user: req.user.userId,
       cartItems: [singleCartItem],
-      subtotal: singleCartItem.price,
+      subtotal: currentPrice,
     })
     res.status(StatusCodes.CREATED).json({ newCart })
   }
@@ -64,13 +67,13 @@ const deleteItemInCart = async (req, res) => {
     throw new NotFoundError('No cart found')
   }
 
-  const itemIndex = cart.cartItems.findIndex(item => item._id.toString() === itemId.toString())
+  const itemIndex = cart.cartItems.findIndex((item) => item._id.toString() === itemId.toString())
   if (itemIndex === -1) {
     throw new NotFoundError(`No item with id: ${itemId}`)
   }
   // Delete item in cart
-  const removedItem = cart.cartItems.splice(itemIndex, 1)[0];
-  cart.subtotal -= removedItem.price
+  const removedItem = cart.cartItems.splice(itemIndex, 1)[0]
+  cart.subtotal -= removedItem.price - (removedItem.price * (removedItem.saleOff / 100))
 
   const updatedCart = await cart.save()
   res.status(StatusCodes.OK).json({ updatedCart })

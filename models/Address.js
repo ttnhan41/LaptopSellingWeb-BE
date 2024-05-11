@@ -2,15 +2,15 @@ const mongoose = require('mongoose')
 
 const AddressSchema = new mongoose.Schema(
   {
-    name: {
+    recipientName: {
       type: String,
       required: true,
     },
-    address: {
+    deliveryAddress: {
       type: String,
       required: true,
     },
-    phoneNumber: {
+    contactNumber: {
       type: String,
       required: true,
     },

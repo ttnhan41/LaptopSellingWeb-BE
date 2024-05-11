@@ -14,6 +14,10 @@ const SingleCartItemSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    saleOff: {
+      type: Number,
+      required: true,
+    },
     product: {
       type: mongoose.Schema.ObjectId,
       ref: 'Laptop',

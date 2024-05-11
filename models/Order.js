@@ -14,6 +14,10 @@ const SingleOrderItemSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    saleOff: {
+      type: Number,
+      required: true,
+    },
     product: {
       type: mongoose.Schema.ObjectId,
       ref: 'Laptop',
@@ -49,6 +53,11 @@ const OrderSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
+      required: true,
+    },
+    address: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Address',
       required: true,
     },
     clientSecret: {

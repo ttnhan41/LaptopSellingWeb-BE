@@ -1,5 +1,7 @@
 const Order = require('../models/Order')
 const Cart = require('../models/Cart')
+const User = require('../models/User')
+const Address = require('../models/Address')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
 
@@ -9,7 +11,10 @@ const fakeStripeAPI = async ({ amount, currency }) => {
 }
 
 const createOrder = async (req, res) => {
-  let { tax, shippingFee } = req.body
+  let { tax, shippingFee, addressId } = req.body
+  if (!addressId) {
+    throw new BadRequestError('Please provide address ID')
+  }
   if (!tax) {
     tax = 0
   }
@@ -27,6 +32,15 @@ const createOrder = async (req, res) => {
   }
 
   const total = tax + shippingFee + cart.subtotal
+
+  const address = await Address.findOne({ _id: addressId })
+  if (!address) {
+    throw new NotFoundError(`No address with id: ${addressId}`)
+  }
+  const user = await User.findOne({ _id: req.user.userId })
+  if (!user.address.find((address) => address.toString() === addressId.toString())) {
+    throw new BadRequestError('Address is not in user address list')
+  }
   
   // Get client secret
   const paymentIntent = await fakeStripeAPI({
@@ -43,6 +57,7 @@ const createOrder = async (req, res) => {
     shippingFee,
     clientSecret: paymentIntent.client_secret,
     user: req.user.userId,
+    address: addressId,
   })
 
   // Reset cart after creating order
