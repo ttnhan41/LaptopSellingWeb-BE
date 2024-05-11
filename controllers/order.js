@@ -4,11 +4,7 @@ const User = require('../models/User')
 const Address = require('../models/Address')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
-
-const fakeStripeAPI = async ({ amount, currency }) => {
-  const client_secret = 'someRandomValue'
-  return { client_secret, amount }
-}
+const stripe = require('stripe')(process.env.STRIPE_PUBLISHABLE_KEY)
 
 const createOrder = async (req, res) => {
   let { tax, shippingFee, addressId } = req.body
@@ -43,9 +39,10 @@ const createOrder = async (req, res) => {
   }
   
   // Get client secret
-  const paymentIntent = await fakeStripeAPI({
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: total,
     currency: 'vnd',
+    automatic_payment_methods: { enabled: true },
   })
 
   // Create order
