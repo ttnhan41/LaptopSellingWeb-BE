@@ -16,7 +16,12 @@ const getUser = async (req, res) => {
 }
 
 const showCurrentUser = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.userId }).select('-password')
+  const user = await User.findOne({ _id: req.user.userId })
+    .select('-password')
+    .populate({
+      path: 'address',
+      options: { sort: { updatedAt: -1 } },
+    })
   if (!user) {
     throw new NotFoundError(`No user with id: ${req.user.userId}`)
   }

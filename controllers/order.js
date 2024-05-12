@@ -4,7 +4,7 @@ const User = require('../models/User')
 const Address = require('../models/Address')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
-const stripe = require('stripe')(process.env.STRIPE_PUBLISHABLE_KEY)
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 const createOrder = async (req, res) => {
   let { tax, shippingFee, addressId } = req.body
@@ -66,7 +66,10 @@ const createOrder = async (req, res) => {
 }
 
 const getAllOrders = async (req, res) => {
-  const orders = await Order.find({})
+  const orders = await Order.find({}).populate({
+    path: 'address',
+    options: { sort: { updatedAt: -1 } },
+  })
   res.status(StatusCodes.OK).json({ orders, count: orders.length })
 }
 
@@ -80,7 +83,10 @@ const getOrder = async (req, res) => {
 }
 
 const getCurrentUserOrders = async (req, res) => {
-  const orders = await Order.find({ user: req.user.userId })
+  const orders = await Order.find({ user: req.user.userId }).populate({
+    path: 'address',
+    options: { sort: { updatedAt: -1 } },
+  })
   res.status(StatusCodes.OK).json({ orders, count: orders.length })
 }
 
