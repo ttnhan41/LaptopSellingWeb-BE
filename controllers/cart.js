@@ -54,7 +54,10 @@ const addItemToCart = async (req, res) => {
 }
 
 const getCurrentUserCart = async (req, res) => {
-  const cart = await Cart.find({ user: req.user.userId })
+  const cart = await Cart.find({ user: req.user.userId }).populate({
+    path: 'usedCoupons',
+    options: { sort: { updatedAt: -1 } },
+  })
   res.status(StatusCodes.OK).json({ cart })
 }
 
@@ -74,6 +77,9 @@ const deleteItemInCart = async (req, res) => {
   // Delete item in cart
   const removedItem = cart.cartItems.splice(itemIndex, 1)[0]
   cart.subtotal -= removedItem.price - (removedItem.price * (removedItem.saleOff / 100))
+  if (cart.subtotal < 0) {
+    cart.subtotal = 0
+  }
 
   const updatedCart = await cart.save()
   res.status(StatusCodes.OK).json({ updatedCart })

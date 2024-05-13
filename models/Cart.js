@@ -38,6 +38,12 @@ const CartSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    usedCoupons: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coupon',
+      },
+    ],
   }
 )
 
