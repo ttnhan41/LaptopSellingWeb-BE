@@ -103,10 +103,22 @@ const updateOrder = async (req, res) => {
   res.status(StatusCodes.OK).json({ order })
 }
 
+const updateOrderStatus = async (req, res) => {
+  const { orderId, orderStatus } = req.body
+  const order = await Order.findOne({ _id: orderId })
+  if (!order) {
+    throw new NotFoundError(`No order with id: ${orderId}`)
+  }
+  order.status = orderStatus
+  await order.save()
+  res.status(StatusCodes.OK).json({ order })
+}
+
 module.exports = {
   createOrder,
   getAllOrders,
   getOrder,
   getCurrentUserOrders,
   updateOrder,
+  updateOrderStatus,
 }
