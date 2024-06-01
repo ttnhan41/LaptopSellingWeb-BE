@@ -6,13 +6,13 @@ const { NotFoundError, BadRequestError } = require('../errors')
 const addAddress = async (req, res) => {
   const { recipientName, deliveryAddress, contactNumber } = req.body
   if (!recipientName) {
-    throw new BadRequestError('Please provide recipient name')
+    throw new BadRequestError('Hãy cung cấp tên người nhận')
   }
   else if (!deliveryAddress) {
-    throw new BadRequestError('Please provide delivery address')
+    throw new BadRequestError('Hãy cung cấp địa chỉ nhận hàng')
   }
   else if (!contactNumber) {
-    throw new BadRequestError('Please provide contact number')
+    throw new BadRequestError('Hãy cung cấp số liên lạc')
   }
   const user = await User.findOne({ _id: req.user.userId })
   const newAddress = await Address.create({
@@ -34,7 +34,7 @@ const addAddress = async (req, res) => {
 const getAddress = async (req, res) => {
   const address = await Address.findOne({ _id: req.params.id })
   if (!address) {
-    throw new NotFoundError(`No address with id: ${req.params.id}`)
+    throw new NotFoundError(`Không có địa chỉ với id: ${req.params.id}`)
   }
   res.status(StatusCodes.OK).json({ address })
 }
@@ -53,17 +53,17 @@ const updateAddress = async (req, res) => {
   const { id: addressId } = req.params
   const { recipientName, deliveryAddress, contactNumber } = req.body
   if (recipientName === '') {
-    throw new BadRequestError('Recipient name field cannot be empty')
+    throw new BadRequestError('Tên người nhận không được để trống')
   }
   else if (deliveryAddress === '') {
-    throw new BadRequestError('Delivery address field cannot be empty')
+    throw new BadRequestError('Địa chỉ nhận hàng không được để trống')
   }
   else if (contactNumber === '') {
-    throw new BadRequestError('Contact number field cannot be empty')
+    throw new BadRequestError('Số liên lạc không được để trống')
   }
   const address = await Address.findOne({ _id: addressId })
   if (!address) {
-    throw new NotFoundError(`No address with id: ${addressId}`)
+    throw new NotFoundError(`Không có địa chỉ với id: ${addressId}`)
   }
   address.recipientName = recipientName
   address.deliveryAddress = deliveryAddress
@@ -78,12 +78,12 @@ const deleteAddress = async (req, res) => {
     _id: addressId,
   })
   if (!address) {
-    throw new NotFoundError(`No address with id ${addressId}`)
+    throw new NotFoundError(`Không có địa chỉ với id ${addressId}`)
   }
   const user = await User.findOne({ _id: req.user.userId })
   const addressIndex = user.address.findIndex((address) => address.toString() === addressId.toString())
   if (addressIndex === -1) {
-    throw new NotFoundError(`No address with id: ${addressId}`)
+    throw new NotFoundError(`Không có địa chỉ với id: ${addressId}`)
   }
   // Delete address in user address list
   user.address.splice(addressIndex, 1)

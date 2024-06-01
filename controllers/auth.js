@@ -6,7 +6,7 @@ const register = async (req, res) => {
   const { email, password } = req.body
   const emailAlreadyExists = await User.findOne({ email })
   if (emailAlreadyExists) {
-    throw new BadRequestError('Email already exists')
+    throw new BadRequestError('Email đã tồn tại')
   }
   // first registered user is an admin
   const isFirstAccount = (await User.countDocuments({})) === 0
@@ -20,15 +20,15 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body
   if (!email || !password) {
-    throw new BadRequestError('Please provide email and password')
+    throw new BadRequestError('Hãy cung cấp email và mật khẩu')
   }
   const user = await User.findOne({ email })
   if (!user) {
-    throw new UnauthenticatedError('Email does not exists')
+    throw new UnauthenticatedError('Email không tồn tại')
   }
   const isPasswordCorrect = await user.comparePassword(password)
   if (!isPasswordCorrect) {
-    throw new UnauthenticatedError('Password is incorrect')
+    throw new UnauthenticatedError('Mật khẩu không đúng')
   }
   const token = user.createJWT()
   res.status(StatusCodes.OK).json({ token })

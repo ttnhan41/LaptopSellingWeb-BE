@@ -8,7 +8,7 @@ const addItemToCart = async (req, res) => {
 
   const dbProduct = await Laptop.findOne({ _id: productId })
   if (!dbProduct) {
-    throw new NotFoundError(`No item with id: ${productId}`)
+    throw new NotFoundError(`Không có sản phẩm với id: ${productId}`)
   }
   const { name, price, saleOff, imageUrl, _id } = dbProduct
   const singleCartItem = {
@@ -28,7 +28,7 @@ const addItemToCart = async (req, res) => {
     }
 
     if (cart.cartItems.find((item) => item.product.toString() === productId.toString())) {
-      throw new BadRequestError('This product is already in cart')
+      throw new BadRequestError('Sản phẩm này đã có trong giỏ hàng')
     }
 
     cart.cartItems.push({
@@ -67,12 +67,12 @@ const deleteItemInCart = async (req, res) => {
   let cart = await Cart.findOne({ user: req.user.userId })
 
   if (!cart) {
-    throw new NotFoundError('No cart found')
+    throw new NotFoundError('Không tìm thấy giỏ hàng')
   }
 
   const itemIndex = cart.cartItems.findIndex((item) => item._id.toString() === itemId.toString())
   if (itemIndex === -1) {
-    throw new NotFoundError(`No item with id: ${itemId}`)
+    throw new NotFoundError(`Không có sản phẩm với id: ${itemId}`)
   }
   // Delete item in cart
   const removedItem = cart.cartItems.splice(itemIndex, 1)[0]

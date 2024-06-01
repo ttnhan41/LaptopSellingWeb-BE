@@ -10,7 +10,7 @@ const getAllUsers = async (req, res) => {
 const getUser = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id }).select('-password')
   if (!user) {
-    throw new NotFoundError(`No user with id: ${req.params.id}`)
+    throw new NotFoundError(`Không có người dùng với id: ${req.params.id}`)
   }
   res.status(StatusCodes.OK).json({ user })
 }
@@ -23,7 +23,7 @@ const showCurrentUser = async (req, res) => {
       options: { sort: { updatedAt: -1 } },
     })
   if (!user) {
-    throw new NotFoundError(`No user with id: ${req.user.userId}`)
+    throw new NotFoundError(`Không có người dùng với id: ${req.user.userId}`)
   }
   res.status(StatusCodes.OK).json({ user })
 }
@@ -55,16 +55,16 @@ const updateUser = async (req, res) => {
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body
   if (!oldPassword || !newPassword) {
-    throw new BadRequestError('Please provide both old password and new password')
+    throw new BadRequestError('Hãy cung cấp mật khẩu cũ và mật khẩu mới')
   }
   const user = await User.findOne({ _id: req.user.userId })
   const isPasswordCorrect = await user.comparePassword(oldPassword)
   if (!isPasswordCorrect) {
-    throw new UnauthenticatedError('Old password is incorrect')
+    throw new UnauthenticatedError('Mật khẩu cũ chưa chính xác')
   }
   user.password = newPassword
   await user.save()
-  res.status(StatusCodes.OK).json({ msg: 'Password has been changed successfully!' })
+  res.status(StatusCodes.OK).json({ msg: 'Mật khẩu đã được thay đổi thành công!' })
 }
 
 module.exports = {

@@ -15,7 +15,7 @@ const getLaptop = async (req, res) => {
     _id: laptopId,
   })
   if (!laptop) {
-    throw new NotFoundError(`No laptop with id ${laptopId}`)
+    throw new NotFoundError(`Không có laptop với id ${laptopId}`)
   }
   res.status(StatusCodes.OK).json({ laptop })
 }
@@ -32,52 +32,52 @@ const updateLaptop = async (req, res) => {
   } = req
 
   if (name === '') {
-    throw new BadRequestError('Name field cannot be empty')
+    throw new BadRequestError('Tên không được để trống')
   }
   else if (price === '') {
-    throw new BadRequestError('Price field cannot be empty')
+    throw new BadRequestError('Giá không được để trống')
   }
   else if (cpu === '') {
-    throw new BadRequestError('CPU field cannot be empty')
+    throw new BadRequestError('CPU không được để trống')
   }
   else if (ram === '') {
-    throw new BadRequestError('RAM field cannot be empty')
+    throw new BadRequestError('RAM không được để trống')
   }
   else if (hardDisk === '') {
-    throw new BadRequestError('Hard disk field cannot be empty')
+    throw new BadRequestError('Ổ cứng không được để trống')
   }
   else if (graphicCard === '') {
-    throw new BadRequestError('Graphic card field cannot be empty')
+    throw new BadRequestError('Card đồ họa không được để trống')
   }
   else if (screen === '') {
-    throw new BadRequestError('Screen field cannot be empty')
+    throw new BadRequestError('Màn hình không được để trống')
   }
   else if (connectionPort === '') {
-    throw new BadRequestError('Connection port field cannot be empty')
+    throw new BadRequestError('Cổng kết nối không được để trống')
   }
   else if (keyboard === '') {
-    throw new BadRequestError('Keyboard field cannot be empty')
+    throw new BadRequestError('Bàn phím không được để trống')
   }
   else if (audio === '') {
-    throw new BadRequestError('Audio field cannot be empty')
+    throw new BadRequestError('Audio không được để trống')
   }
   else if (lan === '') {
-    throw new BadRequestError('LAN field cannot be empty')
+    throw new BadRequestError('LAN không được để trống')
   }
   else if (wirelessLan === '') {
-    throw new BadRequestError('Wireless LAN field cannot be empty')
+    throw new BadRequestError('Wireless LAN không được để trống')
   }
   else if (webcam === '') {
-    throw new BadRequestError('Webcam field cannot be empty')
+    throw new BadRequestError('Webcam không được để trống')
   }
   else if (os === '') {
-    throw new BadRequestError('OS field cannot be empty')
+    throw new BadRequestError('OS không được để trống')
   }
   else if (battery === '') {
-    throw new BadRequestError('Battery field cannot be empty')
+    throw new BadRequestError('Pin không được để trống')
   }
   else if (imageUrl === '') {
-    throw new BadRequestError('Image URL field cannot be empty')
+    throw new BadRequestError('Đường dẫn hình ảnh không được để trống')
   }
   const laptop = await Laptop.findByIdAndUpdate(
     { _id: laptopId }, 
@@ -85,7 +85,7 @@ const updateLaptop = async (req, res) => {
     { new: true, runValidators: true }
   )
   if (!laptop) {
-    throw new NotFoundError(`No laptop with id ${laptopId}`)
+    throw new NotFoundError(`Không có laptop với id ${laptopId}`)
   }
   res.status(StatusCodes.OK).json({ laptop })
 }
@@ -99,7 +99,7 @@ const deleteLaptop = async (req, res) => {
     _id: laptopId,
   })
   if (!laptop) {
-    throw new NotFoundError(`No laptop with id ${laptopId}`)
+    throw new NotFoundError(`Không có laptop với id ${laptopId}`)
   }
   res.status(StatusCodes.OK).send()
 }

@@ -9,7 +9,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const createOrder = async (req, res) => {
   let { tax, shippingFee, addressId } = req.body
   if (!addressId) {
-    throw new BadRequestError('Please provide address ID')
+    throw new BadRequestError('Hãy cung cấp ID địa chỉ')
   }
   if (!tax) {
     tax = 0
@@ -21,21 +21,21 @@ const createOrder = async (req, res) => {
   let cart = await Cart.findOne({ user: req.user.userId })
 
   if (!cart) {
-    throw new NotFoundError('No cart found')
+    throw new NotFoundError('Không tìm thấy giỏ hàng')
   }
   if (!cart.cartItems || cart.cartItems.length < 1) {
-    throw new BadRequestError('No items in cart')
+    throw new BadRequestError('Không có sản phẩm nào trong giỏ hàng')
   }
 
   const total = tax + shippingFee + cart.subtotal
 
   const address = await Address.findOne({ _id: addressId })
   if (!address) {
-    throw new NotFoundError(`No address with id: ${addressId}`)
+    throw new NotFoundError(`Không có địa chỉ với id: ${addressId}`)
   }
   const user = await User.findOne({ _id: req.user.userId })
   if (!user.address.find((address) => address.toString() === addressId.toString())) {
-    throw new BadRequestError('Address is not in user address list')
+    throw new BadRequestError('Địa chỉ không nằm trong danh sách địa chỉ của người dùng')
   }
   
   // Get client secret
@@ -77,7 +77,7 @@ const getOrder = async (req, res) => {
   const { id: orderId } = req.params
   const order = await Order.findOne({ _id: orderId })
   if (!order) {
-    throw new NotFoundError(`No order with id: ${orderId}`)
+    throw new NotFoundError(`Không có đơn hàng với id: ${orderId}`)
   }
   res.status(StatusCodes.OK).json({ order })
 }
@@ -95,7 +95,7 @@ const updateOrder = async (req, res) => {
   const { paymentIntentId } = req.body
   const order = await Order.findOne({ _id: orderId })
   if (!order) {
-    throw new NotFoundError(`No order with id: ${orderId}`)
+    throw new NotFoundError(`Không có đơn hàng với id: ${orderId}`)
   }
   order.paymentIntentId = paymentIntentId
   order.status = 'paid'
@@ -107,7 +107,7 @@ const updateOrderStatus = async (req, res) => {
   const { orderId, orderStatus } = req.body
   const order = await Order.findOne({ _id: orderId })
   if (!order) {
-    throw new NotFoundError(`No order with id: ${orderId}`)
+    throw new NotFoundError(`Không có đơn hàng với id: ${orderId}`)
   }
   order.status = orderStatus
   await order.save()
