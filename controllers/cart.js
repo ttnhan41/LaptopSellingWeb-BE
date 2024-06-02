@@ -70,7 +70,7 @@ const deleteItemInCart = async (req, res) => {
     throw new NotFoundError('Không tìm thấy giỏ hàng')
   }
 
-  const itemIndex = cart.cartItems.findIndex((item) => item._id.toString() === itemId.toString())
+  const itemIndex = cart.cartItems.findIndex((item) => item.product.toString() === itemId.toString())
   if (itemIndex === -1) {
     throw new NotFoundError(`Không có sản phẩm với id: ${itemId}`)
   }
