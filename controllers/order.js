@@ -37,6 +37,12 @@ const createOrder = async (req, res) => {
   if (!user.address.find((address) => address.toString() === addressId.toString())) {
     throw new BadRequestError('Địa chỉ không nằm trong danh sách địa chỉ của người dùng')
   }
+  const { recipientName, deliveryAddress, contactNumber } = address
+  const singleAddress = {
+    recipientName,
+    deliveryAddress,
+    contactNumber,
+  }
   
   // Get client secret
   const paymentIntent = await stripe.paymentIntents.create({
@@ -54,7 +60,7 @@ const createOrder = async (req, res) => {
     shippingFee,
     clientSecret: paymentIntent.client_secret,
     user: req.user.userId,
-    address: addressId,
+    address: singleAddress,
   })
 
   // Reset cart after creating order
@@ -66,18 +72,13 @@ const createOrder = async (req, res) => {
 }
 
 const getAllOrders = async (req, res) => {
-  const orders = await Order.find({})
-    .populate({
-      path: 'address',
-      options: { sort: { updatedAt: -1 } },
-    })
-    .populate('user')
+  const orders = await Order.find({}).populate('user')
   res.status(StatusCodes.OK).json({ orders, count: orders.length })
 }
 
 const getOrder = async (req, res) => {
   const { id: orderId } = req.params
-  const order = await Order.findOne({ _id: orderId }).populate('address')
+  const order = await Order.findOne({ _id: orderId })
   if (!order) {
     throw new NotFoundError(`Không có đơn hàng với id: ${orderId}`)
   }
@@ -85,10 +86,7 @@ const getOrder = async (req, res) => {
 }
 
 const getCurrentUserOrders = async (req, res) => {
-  const orders = await Order.find({ user: req.user.userId }).populate({
-    path: 'address',
-    options: { sort: { updatedAt: -1 } },
-  })
+  const orders = await Order.find({ user: req.user.userId })
   res.status(StatusCodes.OK).json({ orders, count: orders.length })
 }
 

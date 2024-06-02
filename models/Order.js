@@ -56,9 +56,18 @@ const OrderSchema = new mongoose.Schema(
       required: true,
     },
     address: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Address',
-      required: true,
+      recipientName: {
+        type: String,
+        required: true,
+      },
+      deliveryAddress: {
+        type: String,
+        required: true,
+      },
+      contactNumber: {
+        type: String,
+        required: true,
+      },
     },
     clientSecret: {
       type: String,
