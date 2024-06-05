@@ -32,7 +32,7 @@ const createPaymentIntent = async (req, res) => {
     automatic_payment_methods: { enabled: true },
   })
 
-  res.status(StatusCodes.CREATED).json({ paymentIntent })
+  res.status(StatusCodes.CREATED).json({ clientSecret: paymentIntent.client_secret })
 } 
 
 const createOrderStripe = async (req, res) => {
