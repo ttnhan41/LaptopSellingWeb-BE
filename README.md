@@ -1,6 +1,9 @@
 # Intro
-This is the backend of our laptop selling website.
-See the frontend here: https://github.com/ntritin62/LaptopSellingWeb-FE
+This is the backend of our laptop store app.
+
+See the web frontend here: https://github.com/ntritin62/LaptopSellingWeb-FE
+
+See the mobile frontend here: https://github.com/ttnhan41/LaptopStoreMobileApp-FE
 
 ## 💻 Tech Stack
 ![nodejs](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)&nbsp;
